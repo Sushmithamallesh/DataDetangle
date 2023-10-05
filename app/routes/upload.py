@@ -28,3 +28,15 @@ def upload_file(session_id: str, file: UploadFile = File(...)):
     file.close()
 
     return {"filename": file.filename, "session_id": session_id}
+
+
+def upload_questions(session_id: str, questions: str):
+    # create a csv file with the questions
+    session_directory = Path(LOCAL_STORAGE_SOURCE_DIRECTORY) / session_id
+    session_directory.mkdir(parents=True, exist_ok=True)
+    file_path = session_directory / "questions.csv"
+    with open(file_path, "w") as buffer:
+        # iterate over all questions and write them to the file
+        for question in questions.questions:
+            buffer.write(question + "\n")
+    return {"questions": questions, "session_id": session_id}
