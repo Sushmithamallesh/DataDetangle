@@ -1,3 +1,4 @@
+import re
 import PyPDF2
 from fastapi import HTTPException
 from pathlib import Path
@@ -37,7 +38,14 @@ def analyse_session(session_id: str):
     for file in files:
         # parse the file using PyPDF2
         parsed_text = extract_text_from_pdf(file)
+
+        # Remove page numbers - assuming they don't have any other text on their line
+        parsed_text = re.sub(r"^\d+$", "", parsed_text, flags=re.MULTILINE)
+
+        # Remove excess white spaces and new lines
+        text = re.sub(r"\s+", " ", parsed_text).strip()
+
         print(f"Extracting File: {file}")
-        print(parsed_text)
+        print(text)
 
     return {"success": True}
